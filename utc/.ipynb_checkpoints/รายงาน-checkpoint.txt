@@ -1,0 +1,391 @@
+
+keys_word='' # Global Variable
+https://shopee.co.th/search?keyword={keys_word}
+
+ปัญหาที่พบเจอวันนี้
+29/6
+- ไม่สามารถ scraping ในส่วนของราคาของสินค้าใน website มาได้ 
+>>> สมมติฐานคิดว่าเกิดจาก การที่ภายใน div tag นั้นมีหลาย element tag ซ้อนกัน (******* ผิดพลาดจากการเขียน element ที่ได้จาก for loop แล้วแปลงเป็น .txt (!.text) *******)
+    span tag -> " - " -> span tag
+    ราคามีหลาย pattern เช่นราคาปกติ ราคาลด ราคา 12-25 บาท 
+    
+    *** ลองใช้ findChildren ***
+    
+- การ for loop variable ที่มีการสร้างจาก soup แล้วไปเรียกใช้งานที่เราสนใจ โดย append เข้าไป empty list
+  ค่าแสดออกมาเป็น none
+
+- การนำเสนอสิ่งที่ได้เรียนรู้จากการฝึกงาน โดยจะมีการนำเสนอ 2 ครั้ง กลางเดือน ปลายเดือน
+  
+
+30/6 
+- วันนี้ยังไม่สามารถแก้ปัญหาการดึงราคามาได้ 
+***** but I saw the another way to scraped data with scrape all the container. In the container contain all the things that I want to get.
+*** push the data to list and then passed to the dataframe and that was work. 
+**** Ready to data preparation (*************** การใช้ RegEx เข้ามาแก้ปัญหาซึ่งใช้เวลาที่นานกว่าและรูปแบบที่เยอะกว่าในการจัดการกับข้อความที่ดึงมาทั้งหมด****************)
+
+1/7
+- ใช้ regular expression ในการข้อความออกจากกัน โดยเราต้องการแยกเอาคำแนะนำสินค้าแต่ละร้าน ออกจาก ราคา, จำนวนที่ขายแล้ว และจังหวัดที่ตั้งของร้านค้า
+
+- RegEx 
+describe_product=re.findall(r".*\w\S*฿",str(data))
+print(describe_product)
+
+----------- output ---------------
+['0                               (ลูกค้าใหม่ 1 บาท) เสื้อ+กางเกงขาสั้น ผ้าเบา ไม่หด ไม่ย้วย เสื้อยืดคอกลมสีพื้น ชุดกีฬาผู้ชาย ชุดซื้อ 2 ชิ้น ลด ฿5฿', '1                                                                                                         กางเกงวินเทจ 6 กระเป๋า MAFEAR (มีหลายสีให้เลือก)฿', '2                         ใส่โค้ด 615FASH150 ลด150 เสื้อเชิ้ตเกาหลี แขนสั้น สีพื้น ผ้านิ่มนุ่ม เบา ใส่สบาย ไม่ต้องรีด ระบายความร้อนได้ยอดเยี่ยมส่วนลด 50%฿', '3    [ลด 15% โค้ด SPPDAYH15] โฉมใหม่กระดุมสีเดียวกับเสื้อ S1: เสื้อเชิ้ตเกาหลี แขนสั้น สีพื้น มีไซซ์ M L XL XXLชาย/หญิงส่วนลด 20%ซื้อ 3 ชิ้น ลด 5%฿', '4                                                                                 TS MEN เสื้อยืดคอกลมแขนสั้น เสื้อยืดผู้ชาย(มี3สี)รุ่น 0091ส่วนลด 5%฿159฿', '5                               (ลูกค้าใหม่ 1 บาท) เสื้อ+กางเกงขาสั้น ผ้าเบา ไม่หด ไม่ย้วย เสื้อยืดคอกลมสีพื้น ชุดกีฬาผู้ชาย ชุดซื้อ 2 ชิ้น ลด ฿5฿', '6                                          ชุดกีฬาลำลอง, ฤดูใบไม้ผลิและฤดูใบไม้ร่วงของผู้ชาย, 2021แนวโน้มใหม่ของผู้ชาย, ชุดสูท, เสื้อผ้านักเรียนหล่อ,฿', '7                                  🔥พร้อมส่ง🔥 เสื้อยืด เสื้อยืดสีพื้น เสื้อยืดคอกลม เสื้อผู้ชาย รุ่น ST01 ไซส์ M L XL XXL 3XLส่วนลด 5%ช้อปเพิ่มคุ้มกว่า฿49฿', '8                                                                                                           เสื้อยืดชาย oversize คอกลม แขนสั้นส่วนลด 50%฿79฿', '9                   กางเกงเอี๊ยมผู้ชายอินเทรนด์ ชุดจั๊มพ์สูทผู้ชายสไตล์เกาหลี ชุดเอี๊ยมผู้ชายสไตล์วินเทจ เสื้อผ้าแฟชั่นผู้ชายโค้ดลด ฿20ซื้อ 2 ชิ้น ลด 3%฿765฿'
+---------------------------------
+
+for price in re.findall(r".*",str(data)):
+    print(re.findall(".*\w\฿",price))
+    
+----------output-----------------------
+[]
+[]
+['0                               (ลูกค้าใหม่ 1 บาท) เสื้อ+กางเกงขาสั้น ผ้าเบา ไม่หด ไม่ย้วย เสื้อยืดคอกลมสีพื้น ชุดกีฬาผู้ชาย ชุดซื้อ 2 ชิ้น ลด ฿5฿']
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+['4                                                                                 TS MEN เสื้อยืดคอกลมแขนสั้น เสื้อยืดผู้ชาย(มี3สี)รุ่น 0091ส่วนลด 5%฿159฿']
+[]
+['5                               (ลูกค้าใหม่ 1 บาท) เสื้อ+กางเกงขาสั้น ผ้าเบา ไม่หด ไม่ย้วย เสื้อยืดคอกลมสีพื้น ชุดกีฬาผู้ชาย ชุดซื้อ 2 ชิ้น ลด ฿5฿']
+[]
+[]
+[]
+['7                                  🔥พร้อมส่ง🔥 เสื้อยืด เสื้อยืดสีพื้น เสื้อยืดคอกลม เสื้อผู้ชาย รุ่น ST01 ไซส์ M L XL XXL 3XLส่วนลด 5%ช้อปเพิ่มคุ้มกว่า฿49฿']
+[]
+['8                                                                                                           เสื้อยืดชาย oversize คอกลม แขนสั้นส่วนลด 50%฿79฿']
+[]
+['9                   กางเกงเอี๊ยมผู้ชายอินเทรนด์ ชุดจั๊มพ์สูทผู้ชายสไตล์เกาหลี ชุดเอี๊ยมผู้ชายสไตล์วินเทจ เสื้อผ้าแฟชั่นผู้ชายโค้ดลด ฿20ซื้อ 2 ชิ้น ลด 3%฿765฿']
+[]
+['10                                                                                             Cod กางเกงขายาวลําลอง ทรงหลวม พลัสไซซ์ สําหรับผู้ชาย ไซซ์ M-5XL฿316฿']
+[]
+[]
+[]
+['12    ใส่โค้ด 615FASH150 ลด150 เสื้อเชิ้ตเกาหลี🌟 แขนยาว🌟 สีพื้น ผ้านิ่มนุ่ม เบา ใส่สบาย ไม่ต้องรีด ระบายความร้อนได้ยอดเยี่ยมส่วนลด 50%ช้อปเพิ่มคุ้มกว่า฿']
+-----------output-----------------
+
+จากข้อความข้างบน การที่มี null list เป็นเพราะว่าบางอัน ฿ มันติดกับข้อความข้างหน้า
+
+.*\S\฿
+-------output---------
+กางเกงวินเทจ 6 กระเป๋า MAFEAR (มีหลายสีให้เลือก)฿
+-------output---------
+**** len(price_list) = 122 included null in list
+- delete null list in product_list
+dataFrame.dropna(inplace=True)
+---------------------------------------------
+***** Bug & Error ******
+- when we have to import list to dataFrame then we can't access dataframe like list -> list_name[index]
+
+*** fixed using iloc to accessing row df.iloc[[2]]
+2	2 ใส่โค้ด 615FASH150 ลด150 เสื้อเชิ้ตเกาหลี แขนสั้น สีพื้น ผ้านิ่มนุ่ม เบา ใส่สบาย ไม่ต้องรีด ระบายความร้อนได้ยอดเยี่ยมส่วนลด 50%฿ 
+
+----> we can multiple accessing to 
+df.iloc[2:20]
+
+
+
+----> remove number before the sentenses 
+sol:
+.*^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])
+
+    --------------start-------------------
+    
+    # removing the number in front of the sentense
+find_number=re.findall(r'.*',str(removed_list))
+removed_num_list=[]
+for del_no in find_number:
+    if del_no!=None:
+        search_num=re.findall('.*^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])',str(del_no)) # ลบออก
+        # remove from sentence
+        removing_num=find_number.replace(to_replace=r'.*^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])',value='',regex=True)
+        # append to new list
+        removed_num_list.append(removing_num)
+removed_num_list
+        
+    --------------stop--------------------
+
+***bug***
+return ทุก row มา เป็นการวนรอบทุก row 60 แถว จำนวน 60ครั้ง
+
+หลังจากลบออก 
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Input In [38], in <cell line: 4>()
+      4 for del_no in find_number:
+      5     if del_no!=None:
+      6         # remove from sentence
+----> 7         removing_num=find_number.replace(to_replace=r'.*^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])',value='',regex=True)
+      8         # append to new list
+      9         removed_num_list.append(removing_num)
+
+AttributeError: 'list' object has no attribute 'replace'
+
+
+# removing the number in front of the sentense
+find_number=re.findall(r'.*',str(removed_list))
+removed_num_list=[]
+for del_no in find_number:
+    if del_no!=None:
+        # remove from sentence
+        removing_num=re.sub(r'.*^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])','',str(find_number))
+        # append to new list
+        removed_num_list.append(removing_num)
+removed_num_list
+
+removed_num=pd.DataFrame(removed_num_list,columns=['product_list'])
+
+	product_list
+0	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+1	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+2	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+3	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+4	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+...	...
+117	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+118	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+119	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+120	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+121	[' product', '', '0 0 (ลูกค้าใหม่ 1 บาท) เสื้อ...
+
+-----------------------------------------------------------
+
+remove_num=data['product'].str.replace(r'^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])','')
+C:\Users\Keangkai\AppData\Local\Temp\ipykernel_828\3470545993.py:1: FutureWarning: The default value of regex will change from True to False in a future version.
+  remove_num=data['product'].str.replace(r'^(\A[0-9][0-9][0-9])|(\A[0-9][0-9])|(\A[0-9])','')
+  
+removed_num_test=pd.DataFrame(remove_num,columns=['product'])
+product
+0	(ลูกค้าใหม่ 1 บาท) เสื้อ+กางเกงขาสั้น ผ้าเบา ไม่หด ไม่ย้วย เสื้อยืดคอกลมสีพื้น ชุดกีฬาผู้ชาย ชุดซื้อ 2 ชิ้น ลด ฿5฿
+1	กางเกงวินเทจ 6 กระเป๋า MAFEAR (มีหลายสีให้เลือก)฿
+2	ใส่โค้ด 615FASH150 ลด150 เสื้อเชิ้ตเกาหลี แขนสั้น สีพื้น ผ้านิ่มนุ่ม เบา ใส่สบาย ไม่ต้องรีด ระบายความร้อนได้ยอดเยี่ยมส่วนลด 50%฿
+3	[ลด 15% โค้ด SPPDAYH15] โฉมใหม่กระดุมสีเดียวกับเสื้อ S1: เสื้อเชิ้ตเกาหลี แขนสั้น สีพื้น มีไซซ์ M L XL XXLชาย/หญิงส่วนลด 20%ซื้อ 3 ชิ้น ลด 5%฿
+
+ได้แล้ว
+**** bug *****
+export excel แล้ว 
+removed_num_test.to_excel('removed_number.xlsx',encoding='utf-8',index=False)
+file excel เคลื่อนไปอยู่ตรงกลาง
+
+-------------------------------------
+วันที่ 3/7 
+- จัดเรียงโค้ดใหม่ให้มีการ for loop เก็บข้อมูลทุกหน้า
+
+--> ใช้ for loop for i in range()
+--> ใช้ while loop แล้วเอา try & except เข้ามาประยุกต์ใช้
+
+ข้อมูลที่ต้องการเก็บ
+- รายละเอียดของสินค้า+ส่วนลด (describe_product)
+- ราคาสินค้า (product_price)
+- ขายแล้วกี่ชิ้น (amount_price)
+- จังหวัด (province)
+--------------------------------------
+
+แก้ปัญหาได้แล้ว เรื่องการ scraping ราคา 
+แก้ด้วยกันเปลี่ยนจาก txt ----> เป็น text ตรง for loop 
+ใช่จริงด้วย!!!!!!!!!! 
+
+
+4/7
+# create function for scraping data every page 
+# product_data_list=[]
+def scraping_product_data():
+    # input how many pages that I want to scrape
+    for i in range(3):
+        data=driver.page_source #scraping data on web page 
+        soup=BeautifulSoup(data) #set format to BeautifulSoup
+        # scrape product name&discount
+        product_name_discount=soup.find_all('div',{'class':'dpiR4u'})
+        all_product_name_discount=[]
+        for p_name_disc in product_name_discount:
+            all_product_name_discount.append(p_name_disc.text)
+            
+        # scrape product amount
+        products_amount=soup.find_all('div',{'class':'r6HknA uEPGHT'})
+        all_product_amount=[]
+        for p_amount in products_amount:
+            all_product_amount.append(p_amount.text)
+        
+        # scrape province 
+        products_province=soup.find_all('div',{'class':'zGGwiV'})
+        all_product_province=[]
+        for p_province in products_province:
+            all_product_province.append(p_province.text)
+        
+        # scrape product price
+        products_price=soup.find_all('div',{'class':'hpDKMN'})
+        all_product_price=[]
+        for p_price in products_price:
+            all_product_price.append(p_price.text)
+        
+        # time sleep
+        time.sleep(3)
+        # แก้ไขให้สอดคล้องกับ for loop in range(n)
+        next_pages=driver.execute_script("arguments[0].click();",driver.find_element('xpath','//*[@id="main"]/div/div[2]/div/div/div[2]/div[3]/div[3]/div/button[8]'))
+        next_pages.click()
+        
+    #create dataframe from multiple lists using 
+    product_data_list=pd.DataFrame({'describe_product':all_product_name_discount,
+                                    'price':all_product_price,
+                                   'sold_out':all_product_amount,
+                                   'province':all_product_province})
+    product_data_list.head(5)
+    product_data_list.to_csv('Shopee_men_shirt_data.csv',encoding='utf-8-sig',index=False)
+
+# calling scraping data function 
+scraping_product_data()
+
+****bug เกิดจาก chrome => ตัวพิมใหญ่ 
+
+
+
+
+    #create dataframe from multiple lists using 
+    product_data_list=pd.DataFrame({'describe_product':all_product_name_discount,
+                                    'price':all_product_price,
+                                   'sold_out':all_product_amount,
+                                   'province':all_product_province})
+ValueError: All arrays must be of the same length
+
+
+
+****bug*****
+การรวม dataframe 
+การใช้ script next page ไม่สามารถทำได้ 
+next_page=next_pages=driver.execute_script("arguments[0].click();",driver.find_element('xpath','//*[@id="main"]/div/div[2]/div/div/div[2]/div[3]/div[3]/div/button[8]'))
+------------NoSuchElementException 
+
+ลองเปลี่ยนวิธีมาเป็น การ search ด้วย keyword ใน url แทน 
+
+การ for loop เข้ามา output แรก ได้ empty list
+
+
+chrome_options=Options()
+# chrome headless for the run chrome wothout showing the chrome web brower
+# chrome_options.add_argument("--headless")
+# driver=webdriver.Chrome(executable_path=r"./chromedriver_win32/chromedriver.exe",options=chrome_options)
+driver=webdriver.Chrome(executable_path=r"./chromedriver_win32/chromedriver.exe")
+
+search_keyword='เสื้อผ้าผู้ชาย'
+page_num=1
+time.sleep(2)
+driver.get(f'https://shopee.co.th/search?keyword={search_keyword}&page={page_num}')
+thai_button=driver.find_element('xpath','/html/body/div[2]/div[1]/div[1]/div/div[3]/div[1]/button')
+thai_button.click()
+
+# closed_ads=driver.execute_script('return document.querySelector("shopee-banner-popup-stateful").shadowRoot.querySelector("div.shopee-popup__close-btn")')
+# closed_ads.click()
+
+# search=driver.find_element('xpath','//*[@id="main"]/div/header/div[2]/div/div[1]/div[1]/div/form/input')
+# search.send_keys(search_keyword)
+# search.send_keys(Keys.ENTER)
+
+driver.execute_script("document.body.style.zoom='10%'")
+time.sleep(5)
+data=driver.page_source #scraping data on web page 
+soup=BeautifulSoup(data) #set format to BeautifulSoup
+# scrape product name&discount
+time.sleep(5)
+product_name_discount=soup.find_all('div',{'class':'dpiR4u'})
+all_product_name_discount=[]
+for p_name_disc in product_name_discount:
+    all_product_name_discount.append(p_name_disc.text)
+time.sleep(5)         
+# scrape product amount
+products_amount=soup.find_all('div',{'class':'ZnrnMl'})
+all_product_amount=[]
+for p_amount in products_amount:
+    if p_amount not in products_amount:
+        all_product_amount.append('N/A')
+    all_product_amount.append(p_amount.text)
+time.sleep(5)      
+# scrape province 
+products_province=soup.find_all('div',{'class':'zGGwiV'})
+all_product_province=[]
+for p_province in products_province:
+    all_product_province.append(p_province.text)
+time.sleep(5)        
+# scrape product price
+products_price=soup.find_all('div',{'class':'hpDKMN'})
+all_product_price=[]
+for p_price in products_price:
+    all_product_price.append(p_price.text)
+
+product_data_list_page2=pd.DataFrame({'describe_product':all_product_name_discount,
+                                'price':all_product_price,
+                                'sold_out':all_product_amount,
+                                'province':all_product_province})
+product_data_list_page2
+
+WebDriverException
+
+****************
+สามารถมี raw data สำหร้บขั้นตอนต่อไปแล้ว 
+data preprocessing 
+cleaning data
+
+
+
+7/7 
+clean code creating for loop 
+
+product_data_list_page+f"{page}"=pd.DataFrame({'describe_product':all_product_name_discount,
+                                        'price':all_product_price,
+                                        'sold_out':all_product_amount,
+                                        'province':all_product_province})
+product_data_list_page+f"{page}"
+
+****syntax error ****
+เราไม่สามารถใส่+f"{page}"ในตัวแปรได้
+
+rename
+
+Problem 
+การ re-run code ในการ scraping ข้อมูล จะเกิดปัญหา WebdriverException
+
+
+
+
+data_list.append([all_product_name_discount,all_product_price,all_product_amount,all_product_province])
+total_shirt_list=pd.DataFrame(data_list,columns=['describe_product','price','sold_out','province'])
+
+
+test_list=pd.DataFrame(data_list,columns=['describe_product','price','sold_out','province'])
+ไม่มี list แต่ละอัน
+
+nested loop 
+nested_loop_list=[]
+for page in shopee_data_list:
+    for header in page:
+        for rows in header:
+            nested_loop_list.append(rows)
+            
+['d',
+ 'e',
+ 's',
+ 'c',
+ 'r',
+ 'i',
+ 'b',
+ 'e',
+ '_',
+ 'p',
+ 'r',
+ 'o',
+ 'd',
+ 'u',
+ 'c',
+ 't',
+ 
+ 
+ 
+ การ append element of dataframe into the another df
+ UnboundLocalError: local variable 'new_df' referenced before assignment
+ 
+ 
+ เราใช้วิธีการ append ค่าเข้าไปใน list จากนั้นเราก็สร้างตัวแปรใหม่ที่เฉพาะหน้า เช่น page 6 ก็สร้างจากนั้นก็ นำไปสร้าง Dataframe เฉพาะหน้านั้น
+ 
+ เอา list มาสร้าง เป็น dataframe

@@ -1,0 +1,264 @@
+Cleaning data day
+
+global vs local variable 
+we can't calling inside variable(local var) function without passing arguments 
+the main concept for this is scope 
+
+c=5
+def sum_numeber():
+    c=c+2
+    print("sum of number:",c)
+
+sum_number() 
+# output unbounded error 
+
+solving this problem using global keyword
+c=5
+def sum_numeber():
+    global c
+    c=c+2
+    print("sum of number:",c)
+
+sum_number() 
+# output 7 
+
+but!!!!! this was dang
+the best way to solving this problem in real work life by passed argument to function that we have define
+def sum_numeber(c):
+    #global c
+    c=c+2
+    print("sum of number:",c)
+
+sum_number(c=5) 
+# output 7 
+---------------------------------------------------
+วิเคราะห์ raw data csv file 
+---------------------------------------------------------
+900 rows and 4 columns 
+
+ describe_product | price | sold_out | province
+                  |       |          |
+                  |       |          | 
+                  |       |          |
+                  |       |          |
+                  |       |          |
+                  |       |          |                
+----------------------------------------------------------
+- รายละเอียดสินค้า มี stop word อิโมจิ (*** แล้วเราจะแน่ใจได้อย่างไรว่า อิโมจิจะไม่มีผลในการนำมาวิเคราะห์ ***)
+- รายละเอียดสินค้ามีคำว่าลดราคาเป็น % เป็นตัวเลข จะมีผลในการตัดสินใจซื้อของลูกค้ามากน้อยเพียงใด 
+- ข้อมูลเราไปดึงมาวันที่ 7.7 เป็นช่วงโปรทำให้ข้อมูลสินค้าอาจจะลดลงมากกว่าปกติ
+- ราคาจะมี 3 patterns 
+    ฿100 - ฿200 -----> ช่วงราคาโดย เริ่มต้น 100 บาท ถึง 200 บาท
+    ฿120
+    ฿350฿290 ---> ลดราคาจาก 350 บาท เหลือ 290 บาท
+    
+- sold_out มีจำนวนที่เป็น (***ใช้ regex แยกเอาแต่จำนวนที่เป็นตัวเลข***)
+    1ชิ้น
+    10พันชิ้น --> แก้ไขจากพันเป็น 000
+    nan 
+    
+คำถาม?
+- ถ้าหากเราตัดสินใจใช้ RegEx ตัดราคาต้นออกจาก pattern เราจะแน่ใจได้อย่างไรว่าผู้บริโภค
+  **** ความคิดเห็นของพี่นุก**** ไม่ควรตัด
+    
+     **********************************    
+- province มีทั้งในประเทศและต่างประเทศ
+
+
+sold_out_amount=[]
+for num in select_num:
+    find_thousand=num.split()[1]
+    if 'พัน' in find_thousand:
+        find_thousand=int(float(find_thousand.replace('พัน','000'))*1000)
+        sold_out_amount.append(find_thousand)
+    else:
+        find_thousand=int(find_thousand)
+        sold_out_amount.append(find_thousand)
+sold_out_amount
+
+[43000000,
+ 32,
+ 43000000,
+ 30000000,
+ 52500,
+ 12600,
+ 34,
+ 48400,
+ 10000000,
+ 23300,
+ 11100,
+
+sold_out_amount=[]
+for num in select_num:
+    find_thousand=num.split()[1]
+    if 'พัน' in find_thousand:
+        # find_thousand=int(float(find_thousand.replace('พัน','000'))*1000)
+        thousand=find_thousand.replace('พัน','000')
+        if '.' in thousand:
+            thousand=int(float(thousand.replace('พัน','000'))*1000)
+            sold_out_amount.append(thousand)
+        else:
+            thousand=int(thousand.replace('พัน','000'))
+            sold_out_amount.append(thousand)
+    else:
+        find_thousand=int(find_thousand)
+        sold_out_amount.append(find_thousand)
+sold_out_amount
+
+# insert(index, column_name, data)
+raw_data.insert(2,'sold_out_amount',sold_out_amount)
+
+raw_data.drop(['sold_out'],axis=1,inplace=True)
+
+************************
+ราคาควรจะ split ออกไป แยกเป็น price 1 price 2
+ในความเป็นจริง เค้าจะสนใจตัวสินค้ามากกว่าสินค้าไหนขายดี วันที่ จำนวน เอาไปเก็บใน database ได้ วิเคราะห์ง่ายกว่า ราคาสุดท้ายเอามาเฉลี่ยได้ 
+
+province_list=[]
+remove_prefix_prov=raw_data['province']
+for prov in remove_prefix_prov:
+    if 'จังหวัด' in prov:
+        removed_prov=prov.replace('จังหวัด','')
+        province_list.append(removed_prov)
+    else:
+        province_list.append(prov)
+province_list
+
+raw_data.drop(['province'],axis=1,inplace=True)
+raw_data.insert(3,'province',province_list)
+raw_data.head(5)
+
+--------------------------------------------------------
+
+แยกราคาออกมาเป็น column ใหม่ 
+฿129 - ฿149 
+for pattern in several_price:
+    # pattern 1 :฿129 - ฿149
+    if '-' in pattern:
+        splited_price=pattern.split(' - ')
+        for i in splited_price:
+            if splited_price.index(i)%2==0:
+                pattern1_1st=int(i.replace('฿',''))
+                price1_list.append(pattern1_1st)
+            else:
+                pattern1_2nd=int(i.replace('฿',''))
+                price2_list.append(pattern1_2nd)
+                
+    # pattern 2 :฿149฿129
+    elif pattern==re.findall('.*(^฿\d[0-9]{0,3}\฿\d[0-9]{0,3})',pattern):# return list ['฿149฿129']
+        pattern3=(pattern.findall('.*(^฿\d[0-9]{0,3}\฿\d[0-9]{0,3})',pattern))[0]
+        pattern3_split=re.sub(r'^.','',pattern3).split('฿')
+        test_append.append(pattern3_split) # output เป็น null list 
+        for i in pattern3_split:
+            if  pattern3_split.index(i)%2==0:
+                pattern3_1st=int(i)
+                price1_list.append(pattern3_1st)
+            else:
+                pattern3_2nd=int(i)
+                price2_list.append(pattern3_2nd)
+    *******error ตารางใส่ค่าซ่ำกับค่าแรก********
+    ได้ข้อสรุปแล้วว่า เงื่อนไข pattern ที่3 ผิด จึงไม่สามารถนำเข้าได้
+    
+    แก้ได้แล้วอีดอกกกกกกกกกกกกกกกกกก
+        elif pattern.count('฿')==2 and '-' not in pattern:# return list ['฿149฿129']
+        pattern3_split=re.sub(r'^.','',pattern).split('฿')
+        for i in pattern3_split:
+            if  pattern3_split.index(i)%2==0:
+                pattern3_1st=(i)
+                price1_list.append(pattern3_1st)
+            else:
+                pattern3_2nd=(i)
+                price2_list.append(pattern3_2nd)
+                
+                
+574	Ralph Lauren Oxford Shirt (BOY SIZE)แบรนด์แท้ถูกชัวร์	฿1,300	1	1	2600	สมุทรปราการ
+564	Maden ยี่ห้อเสื้อผ้าทำงานผู้ชายที่เรียบง่ายอาทิตย์ที่มีคุณภาพสูงเยาวชนผู้ใหญ่ญี่ปุ่นย้อนยุคฟอร์ดเสื้อวินเทจสีทึบคลาสสิกแขนยาวบางเสื้อโค้ดลด ฿30	฿1,260฿530	1,260	530	10	ต่างประเทศ
+
+.*(^฿\d[0-9]{0,3})
+฿1,200 ---> output จะได้แค่ ฿1
+
+
+305	เสื้อยืดแขนสั้นลําลอง พิมพ์ลาย Fog FEAR OF GOD ESSENTIALS แฟชั่นสําหรับผู้ชาย และผู้หญิง	฿1,323฿265	1,323	265	41	ต่างประเทศ
+
+10/7
+
+price1_list=[]
+price2_list=[]
+test_append1=[]
+test_append2=[]
+test_append3=[]
+not_match_pattern=[]
+for pattern in several_price: 
+    # pattern 1 :฿129 - ฿149
+    if '-' in pattern:
+        test_append1.append(pattern)
+        splited_price=pattern.split(' - ') # return list that contain 2 elements
+        # if ',' in splited_price:
+        #     splited_price=splited_price.replace(',','')
+        # else:
+        #     # less than 4 digit(1000)
+        #     pass
+        # for i in splited_price:
+        #     if splited_price.index(i)%2==0:
+        #             pattern1_1st=int(i.replace('฿',''))
+        #             price1_list.append(pattern1_1st)
+        #     else:
+        #         pattern1_2nd=int(i.replace('฿',''))
+        #         price2_list.append(pattern1_2nd)
+         
+        for i in splited_price:
+            if ',' in i:
+                remove_comma=i.replace(',','')
+                # Returns the lowest index in list that obj appears
+                if splited_price.index(i)%2==0:
+                    pattern1_1st=int(i.replace('฿',''))
+                    price1_list.append(pattern1_1st)
+                else:
+                    pattern1_2nd=int(i.replace('฿',''))
+                    price2_list.append(pattern1_2nd)
+            else:
+                if splited_price.index(i)%2==0:
+                    pattern1_1st=int(i.replace('฿',''))
+                    price1_list.append(pattern1_1st)
+                else:
+                    pattern1_2nd=int(i.replace('฿',''))
+                    price2_list.append(pattern1_2nd)
+
+    # pattern 2 :฿149฿129
+    elif pattern.count('฿')==2 and '-' not in pattern:# return list ['฿149฿129']
+        test_append2.append(pattern)
+        pattern3_split=re.sub(r'^.','',pattern).split('฿')
+        for i in pattern3_split:
+            if ',' in i:
+                remove_comma=i.replace(',','')
+                if  pattern3_split.index(i)%2==0:
+                    pattern3_1st=(remove_comma)
+                    price1_list.append(pattern3_1st)
+                else:
+                    pattern3_2nd=(remove_comma)
+                    price2_list.append(pattern3_2nd)
+            else:
+                if  pattern3_split.index(i)%2==0:
+                    pattern3_1st=(i)
+                    price1_list.append(pattern3_1st)
+                else:
+                    pattern3_2nd=(i)
+                    price2_list.append(pattern3_2nd)
+
+    # pattern 3 :฿129
+    else:
+        test_append3.append(pattern)
+        # pattern element from several_price
+        # pattern=re.findall(r'.*(^฿\d[0-9]{0,3}|.*(^฿\d[0-9]{0,4}\,\d[0-9]{0,4}))',pattern)
+        pattern2=pattern.replace('฿','')
+        if ',' in pattern2:
+            remove_comma=int(pattern2.replace(',',''))
+            duplicate_patt2=remove_comma
+            price1_list.append(remove_comma)
+            price2_list.append(duplicate_patt2)
+        else:
+            duplicate_patt2=pattern2
+            price1_list.append(pattern2)
+            price2_list.append(duplicate_patt2)
+
+******แก้ปัญหาเรื่องเครื่องหมายราคาได้แล้ว*********

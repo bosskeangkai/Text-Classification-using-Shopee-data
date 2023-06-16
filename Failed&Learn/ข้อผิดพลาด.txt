@@ -1,0 +1,7 @@
+***************
+More learning and practice
+- iteration
+- Pandas -> DataFrame, List and dataframe , 
+- String format using Regular Expression
+- nested loop
+***************

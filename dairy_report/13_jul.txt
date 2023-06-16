@@ -1,0 +1,46 @@
+อัปเดตล่าสุดกระบวนการ pre-processing text 
+- punctuation removal
+def custom_remove_punctuation(text):
+    punctuations="".join([i for i in text if i not in custom_punctuation])
+    return punctuations
+removed_punc=removed_emoji['describe_product'].apply(lambda x:custom_remove_punctuation(x))
+removed_punc
+----------------------------------------------------------------------------------------------
+- stopword removal
+stopwords = list(thai_stopwords())
+def remove_stopword(text):
+    rm_stopword="".join([i for i in text if i not in stopwords])
+    return rm_stopword
+removed_stopword=word_tokenization['describe_product'].apply(lambda x:remove_stopword(x))
+removed_stopword
+----------------------------------------------------------------------------------------------
+- word tokenization
+sentence_tokenization=[]
+for sentence in removed_stopwords['describe_product']:
+    sentence_tokenization.append([word_tokenize(sentence,keep_whitespace=False)]) # solved this problem by appended '[]'
+sentence_tokenization[0:2]
+----------------------------------------------------------------------------------------------
+- emoji removal
+def remove_emoji(text):
+    emojis=UNICODE_EMOJI["en"]
+    if isinstance(emojis,str):
+        emojis=[emojis]
+    sentence=text
+    for x in emojis:
+        sentence=sentence.replace(x,"")
+    return sentence
+remove_emoji_out=raw_data_word.applymap(lambda x:remove_emoji(x))
+
+remove_question_mark=[]
+for i in remove_emoji_out['describe_product']:
+    if "�" in i:
+        i=i.replace("�","")
+        remove_question_mark.append(i)
+    else:
+        remove_question_mark.append(i)
+remove_question_mark
+----------------------------------------------------------------------------------------------
+
+*****
+จาก data ยังมีคำที่ไม่ได้จำเป็นอยู่หรือสัญลักษณ์ที่ไม่ได้จำเป็น
+【, SizeS, 8, XL, 】,

@@ -1,0 +1,54 @@
+Dairy Update 7/7/65
+
+Progress: 
+- แก้ไขตัว coding ในการ scraping data ให้สามารถวนลูปหน้าการดึงข้อมูลหลายหน้าได้
+______________________________________________________________________________________
+    for page in range(5,page_num+1):
+        driver.get(f'https://shopee.co.th/search?keyword={search_keyword}&page={page}')
+        time.sleep(3)
+        try:
+            thai_button=driver.find_element('xpath','/html/body/div[2]/div[1]/div[1]/div/div[3]/div[1]/button')
+            thai_button.click()
+        except NoSuchElementException:
+            print(f"Error from scraping page {page}")
+            pass
+        time.sleep(1)
+
+- สามารถนำเอาข้อมูลออกมาได้ทั้งหมดเพิ่มอีก 600 row แล้วนำมารวมกับข้อมูลเดิม 300 row จากนั้น concatnate ข้อมูลรวมกัน 
+        
+        product_data_list_page=pd.DataFrame({'describe_product':all_product_name_discount,
+                                             'price':all_product_price,
+                                             'sold_out':all_product_amount,
+                                             'province':all_product_province})
+        # concatnate dataframe 
+        shopee_data_list.append(product_data_list_page) # append dataframe into list
+
+        ภายใน shopee_data_list เป็น list สามารถ indexing เข้าไปโดยภายในมีทั้งหมด 10 elements แต่ละ element บรรจุ ข้อมูล 4 อย่าง จำนวน 60 rows
+
+
+        page6=shopee_data_list[0] #ตรงนี้สามารถนำเอาไปสร้าง Dataframe ได้เลย 
+        
+        *************************************************
+        inside the indexing list 
+            describe_product price sold_out province
+        0	T0078 ยอดฮิต เสื้อผ้าคุณผู้หญิงและคุณผู้ชาย เสื้อยืดคอกลมแฟชั่นunisex เสื้อแขนสั้นใส่ได้ทั้งผู้หญิงแ	฿25 - ฿48	ขายแล้ว 119 ชิ้น	จังหวัดสมุทรสาคร
+        1	กางเกงขาสั้นชาย แขนสั้น กางเกงขาสั้นผู้ชาย เสื้อผ้า กางเกงขาสั้นผู้ชาย กางเกงขาสั้น เสื้อผ้ากีฬาผู้ชาย	฿229฿179	ขายแล้ว 234 ชิ้น	จังหวัดกรุงเทพมหานคร
+        2	T0078 ใหม่2020ยอดฮิต เสื้อ เสื้อผ้าคุณผู้หญิงและคุณผู้ชาย เสื้อทีเชิร์ตเสื้อยืดคอกลมแฟชั่นunisex เสื้อยอดฮิตลาย เสื้อแขน	฿25 - ฿48	ขายแล้ว 45 ชิ้น	จังหวัดสมุทรสาคร
+        3	7th Street เสื้อยืด รุ่น STN005โค้ดลด ฿50ออกใบกำกับภาษี	฿350฿250	ขายแล้ว 1.2พัน ชิ้น	จังหวัดกรุงเทพมหานคร
+        4	GIANTSHOP กางเกงขาสั้นฮาวาย ชายหาด Summer Style S1ซื้อ 3 ชิ้น ลด ฿20	฿79	ขายแล้ว 1.2พัน ชิ้น	จังหวัดกรุงเทพมหานคร
+        5	Incerun เสื้อเชิ้ตแฟชั่นผู้ชายแขนยาวคอปกสีคมชัดโค้ดลด ฿70	฿550	ขายแล้ว 43 ชิ้น	ต่างประเทศ
+        6	เสื้อยืดแขนสั้นผู้ชาย Oversize, เสื้อผ้าแฟชั่นวัยรุ่น, เสื้อยืด Plus Size, เสื้อยืดคอกลม, เสื้อผ้าผู้ชาย	฿35 - ฿55	ขายแล้ว 114 ชิ้น	จังหวัดสมุทรปราการ
+        7	TS MEN เสื้อยืดแขนยาว เสื้อผ้าแฟชั่นชาย เสื้อแขนยาว (สีขาว สีดำ สีชมพู) รุ่น 0036ส่วนลด 5%	฿199฿60	ขายแล้ว 4พัน ชิ้น	จังหวัดกรุงเทพมหานคร
+        8	D177 ใหม่2021ยอดฮิต เสื้อผ้าคุณผู้หญิงและคุณผู้ชายเสื้อทีเชิ๊ต เสื้อยืดคอกลมแฟชั่นunisex เสื้อแขนสั้นใส่ได้ทั้งผู้หญิงแล	฿29 - ฿54	ขายแล้ว 15 ชิ้น	จังหวัดสมุทรสาคร
+        9	T0054 ยอดฮิต เสื้อผ้าคุณผู้หญิงและคุณผู้ชาย เสื้อยืดคอกลมแฟชั่นunisex เสื้อแขนสั้นใส่ได้ทั้งผู้หญิงแ	฿25 - ฿48	ขายแล้ว 334 ชิ้น	จังหวัดสมุทรสาคร
+        10	New✨เสื้อยืดคอกลม เสื้อผ้าแฟชั่นผู้ชาย เสื้อยืดคอกลม ราคาถูก ใส่สบาย 2 สี ดำ ขาว	฿159฿95	ขายแล้ว 216 ชิ้น	จังหวัดกรุงเทพมหานคร
+        
+        
+
+
+
+
+        list_all_shirt=pd.concat([list_all_product,page_6_15],axis=0)
+        list_all_shirt.reset_index(drop=True)
+
+        list_all_shirt.to_csv('raw_data_shirt_shopee.csv',encoding='utf-8-sig',index=False)

@@ -1,0 +1,61 @@
+  # for loop to access each hyperlink to get text
+        describe_product_list=[]
+        header_name_product=[]
+        for href_link in list_of_phone_link:
+            # route to hyperlink and get describe_product
+            driver.get(f'{href_link}')
+            time.sleep(2)
+            # getting the dexcribe product text
+            data_each_page=driver.page_source
+            soup_2=BeautifulSoup(data_each_page)
+            time.sleep(1)
+            # header_name=soup_2.find_all('xpath','//*[@id="main"]/div/div[2]/div[1]/div/div[1]/div/div[2]/div[3]/div/div[1]/span')
+            # # test_header.append(header_name)
+            # for name in header_name:
+            #     header_name_product.append([name.text])
+            
+            describe_product=soup_2.find_all('p',{'class':'hrQhmh'})
+            data_lists.append(describe_product)
+            for describe in describe_product:
+                describe_product_list.append(describe.text.strip("\n\r\t"))
+            
+        # test_header.append(header_name_product)
+        test_desc.append(describe_product_list)
+        
+** output **
+---------------------------------------------
+[['ข้อมูลตัวเครื่อง\nสมาร์ทโฟน (โทรศัพท์มือถือพร้อมระบบปฏิบัติการ)\nจอแสดงผล Dynamic AMOLED 2X 24-bit (16 ล้านสี)\n- จอแสดงผล HDR 10-\n- กล้องหน้าฝังบนจอ (Infinity O)\n- จอแสดงผลมีรูสำหรับกล้องหน้า (Punch-Hole Display)\n- อัตราการสัมผัสหน้าจอ 120 เฮิรตซ์ (Refresh Rate 120Hz)\n- กว้าง 6.2 นิ้ว (แนวทะแยง)\n- ความละเอียด 1080 x 2400 พิกเซล (421 ppi)\n- สภาพสินค้า สินค้ามือสอง 99 ใหม่ (second hand)\n- Always on display\nวัสดุรอบตัวเครื่อง\n- หน้าจอกระจกแข็ง Gorilla Glass Victus\n- กรอบพลาสติก\n- ขอบรอบเครื่องทำจากอลูมิเนียม\nระบบเซ็นเซอร์ (Sensor)\n- ระบบสแกนลายนิ้วมือใต้หน้าจอ (Fingerprint Under Display)\n- ระบบหมุนภาพอัตโนมัติ (Accelerometer)\n- ตรวจจับแสงปรับความสว่างอัตโนมัติ (Ambient light)\n- ตรวจจับความเคลื่อนไหวของตัวเครื่อง (Accelerometer)\n- ระบบเปิด/ปิดหน้าจออัตโนมัติขณะสนทนา (Proximity)\n- ระบบเซนเซอร์หมุนภาพ (Gyroscope)\n- ปรับมุมมองการแสดงผลอัตโนมัติ (Orientation)\n- ระบบวัดความกดอากาศ (Barometer)\nคุณสมบัติการกันน้ำ (Waterproof)\n- กันน้ำได้ชั่วคราว\n- กันน้ำที่ความลึกไม่เกิน 1.5 เมตร\nระบบป้องกัน\n- ฝุ่นละออง (Resistance to dust)\nมีสีให้เลือก (Colors) : Pink Gray Purple\nข้อมูลเครือข่าย (Network)\nเครือข่าย\n- GSM 850/900/1800/1900 MHz\n- UMTS 850/900/1900/2100 MHz\n- LTE Bands 1/ 3/ 5/ 7/ 8/ 20/ 38/ 40/ 41\n- 5G Bands 1/ 3/ 38/ 41/ 77/ 78\nเทคโนโลยีการรับ/ส่งข้อมูล\n- 3G\n- 4G\n- 5G\nใช้งาน Nano-SIM\nใช้งาน eSIM\nระบบปฏิบัติการ (OS CPU GPU)\nระบบปฏิบัติการ: One UI 3.1 based on Android 11\n\n- ความเร็ว : 2.9 GHz\nหน่วยประมวลผลกราฟิกส์ (GPU) : Mali-G78 MP14\nหน่วยความจำ\n- RAM 8GB\n- ROM 128GB\n- ROM 256GB : UFS 3.0\nระบบเชื่อมต่อ\nการหาตำแหน่ง: Assisted GPS\nWiFi 802.11 a/b/g/n/ac/6\n- จุดกระจายสัญญาณอินเตอร์เน็ตแบบพกพา (Portable Wi-Fi Hotspot)\n- เชื่อมต่อไร้สายระหว่างอุปกรณ์โดยตรง (Wi-Fi Direct)\nBluetooth 5.0\nรองรับ NFC (Near Field Communication)\nANT-\nType-C USB 3.2\nฟังก์ชั่นมัลติมีเดีย\nกล้องดิจิตอล 12MP - 12MP (Ultrawide) - 64MP (Telephoto) (Triple Camera)\n- รูรับแสงขนาด ƒ/1.8\n- ไฟแฟลช LED\n- ซูมออฟติคอล 1.1 เท่า (1.1x Optical Zoom)\n- ซูมไฮบริดออฟติคอล 3 เท่า (3x Hybrid Optical Zoom)\n- โฟกัสอัตโนมัติ (Auto Focus)\n- ระบบป้องกันภาพสั่นไหวแบบออปติคอล (OIS)\n- ระบบกันสั่น Electronic Image Stabilization (EIS)\n- ระบบโฟกัสภาพ Phase Detection Auto Focus (PDAF)\nโหมดถ่ายภาพช่วงการรับแสงสูง (HDR)\nกล้องหน้า (Front Camera)\n- ความละเอียด 10MP\n- รูรับแสงขนาด ƒ/2.2\n- รองรับ Video Call สนทนาแบบเห็นภาพ\n- กล้องหน้า HDR\n- บันทึกวีดีโอระดับ HD 30 เฟรมต่อวินาที\n- บันทึกวีดีโอระดับ 4K 30/60 เฟรมต่อวินาที\nบันทึกวีดีโอ ภาพเคลื่อนไหว (Video Recording)\n- ความละเอียดของภาพสูงสุด 7680 x 4320 พิกเซล\n- บันทึกวีดีโอระดับ HD 30/60/240 เฟรมต่อวินาที\n- บันทึกวีดีโอระดับ 4K 30/60 เฟรมต่อวินาที\n- บันทึกวีดีโอระดับ 8K 24 เฟรมต่อวินาที\nTuned by AKG\nแบตเตอรี่ - ระบบชาร์จ\nแบตเตอรี่ 4000 mAh (Standard Battery)\nรองรับชาร์จไร้สาย (Wireless Charging)\n- รองรับชาร์จไว 25W (Fast Charging)-',
+  '◇รุ่น: S21 Ultra\n◇การ์ดจอ: MTK6889\n◇สแตนด์บาย: สแตนคู่การ์ดคู่ (การ์ดคู่ + ช่องเสียบการ์ด micro SD เฉพาะ)\n◇หน้าจอ: 6.1 HD+ เต็มจอ 1440*3200\n◇ลำโพง: ลำโพง 1511 กล่อง\n◇ความถี่: GSM850 900 18001900MHz, 3GWCDMA850 1900 2100MHz, 4G LTE 5G\n◇การสั่นสะเทือน: รองรับ\n◇สี: ม่วง/ขาว/ดำ\n◇หน่วยความจำ: 8GB RAM + ROM 256GB\n◇มัลติมีเดีย: MP3, MP4, 3GP, FM, วิทยุ, บลูทูธ\n◇กล้อง: 16MP+32MP\n◇มัลติฟังก์ชั่น: เต็มหน้าจอ, การจดจำใบหน้า, การ์ดคู่, Wifi, GPS, ตัวเซนเซอร์แรงโน้มถ่วง, นาฬิกาปลุก, ปฏิทิน, เครื่องคิดเลข, เครื่องบันทึกเสียง, เครื่องบันทึกวิดีโอ, WAPMSGPR, โปรแกรมดูภาพ, e-book, นาฬิกาโลก, การ์ดงานด้านหลังแฟลช IML ตั้งค่าความครอบคลุม\n◇ภาษา: รองรับหลายภาษา\n◇อื่นๆ: ระบบ Android OS 11\n◇แบตเตอรี่: แบตเตอรี่ลิเธียมไอออน 5000 มิลลิแอมป์',
+  'จอแสดงผล (Display)',
+  'สมาร์ทโฟน (โทรศัพท์มือถือพร้อมระบบปฏิบัติการ)',
+  'จอแสดงผล AMOLED 24-bit (16 ล้านสี)',
+  '- หน้าจอหยดน้ำ (Waterdrop Display)',
+  '- กว้าง 6.7 นิ้ว (แนวทะแยง)',
+  '- ความละเอียด 1080 x 2400 พิกเซล',
+  '(393 ppi)',
+  'วัสดุตัวเครื่อง (Body)',
+  'หน้าจอกระจก',
+  'กรอบพลาสติก',
+  'มีสีให้เลือก (Colors) : black, blue',
+  'ระบบปฏิบัติการ (OS, CPU, GPU)',
+  'TCL UI 4.0 based on Android 12',
+  'CPU : Mediatek : Helio G37 Octa Core',
+  'ความเร็ว : 2.3 GHz',
+  'GPU : PowerVR GE8320',
+  'RAM 4GB, ROM 128GB , microSD สูงสุด 256 GB',
+  'ขนาด (สูงxกว้างxลึก, มม.): 164.54 x 75.24 x 7.74',
+  'น้ำหนัก: 184 กรัม',
+  'ปุ่มข้าง: ปุ่มเปิดปิดเครื่อง, ปุ่มปรับระดับเสียง',
+  'พื้นผิว: พิมพ์สกรีนและขัดผิว',
+  'แบตเตอรี่: 5010mAh (มาตรฐาน)',
+  'การชาร์จเร็ว: 9V2A, Type-C USB 2.0',
+  'เวลาชาร์จ: 2.1 ชั่วโมง',
+  '',
+  '* ข้อมูลยึดตามผลจากการทดสอบของแล็บภายใน อายุการใช้งานแบตเตอรี่จริงจะแตกต่างกันไปตามลักษณะการใช้งานของแต่ละบุคคล (ความแรงของสัญญาณเครือข่าย การใช้แอป เป็นต้น)',
+  'รับประกัน 1 ปี',
+  ---------------------------
+  
+strip("\r\n\t")) --> return 185 row 
+
+ทดสอบ โดยการแก้เอา นั้นวนออกจาก loop 
+แก้ไขล่าสุดคือ ทำการ append list เข้าไปโดยตรงเลย 

@@ -1,0 +1,108 @@
+19/7
+
+- ประชุมหารือกับเพื่อนม็อบในเรื่องของการหาโมเดลสำหรับการทำโปรเจคครั้งนี้ 
+
+- Machine Learning -> linear regression 
+
+วิเคราะห์ Dataframe ที่สามารถนำมาคำนวณ train model ได้ โดยข้อมูลมีทั้ง categorical & Numerical data
+
+
+      describe_product_cleaned           |    first_price	|  second_price  |	 different_price  |	average_price |	sold_out_amount  | province   
+____________________________________________________________________________________________________________________________________________________
+['ลูกค้า', '1', 'บาท', 'เสื้อ', 'กางเกงขาสั้น',          129	           149	            20	              139.0	          43000	         กรุงเทพมหานคร
+'ผ้า', 'เบา', 'หด', 'ย้วย', 'เสื้อยืด', 
+'คอกลม', 'สี', 'พื้น', 'ชุดกีฬา', 'ผู้ชาย', 
+'ชุด', 'ซื้อ', '2','ชิ้น', 'ลด', '฿', '5']
+____________________________________________________________________________________________________________________________________________________
+
+province, describe_product_cleaned --> categorical data
+first_price, second_price, different_price, average_price, sold_out_amount --> Numerical data
+
+****** Todo list today ******
+- ทดลองนำเอา average_price & sold_out_amount มาหาความสัมพันธ์ด้วย linear regression 
+- ตัดสินใจยังไงกับ element in province  [done]
+    - label ใหม่ เป็นภาษาอังกฤษไหม เพื่อที่จะได้สามารถนำไป plot กราฟและ label ได้ 
+            BKK        กรุงเทพมหานคร    281        
+            FRC        ต่างประเทศ       221  ---> foreign country
+            SKN        สมุทรสาคร        186
+            SPK        สมุทรปราการ       54
+            NPT        นครปฐม            28
+            NBI        นนทบุรี           26
+            PTE        ปทุมธานี          15
+            CMI        เชียงใหม่         11
+            SPB        สุพรรณบุรี         4
+            UDN        อุดรธานี           4
+            BKN        บึงกาฬ             3
+            PCT        พิจิตร             3
+            CBI        ชลบุรี             2
+            LPN        ลำพูน              2
+            KKN        ขอนแก่น            2
+            NMA        นครราชสีมา         2
+            CCO        ฉะเชิงเทรา         2
+            LRI        ลพบุรี             2
+            SKA        สงขลา              1
+            LEI        เลย                1
+            PRE        แพร่               1
+            ID         อินโดนีเซีย        1
+            UBN        อุบลราชธานี        1
+            NPM        นครพนม             1
+                    Name: province, dtype: int64
+                    
+data['province'].replace(['กรุงเทพมหานคร','ต่างประเทศ','สมุทรสาคร','สมุทรปราการ','นครปฐม','นนทบุรี','ปทุมธานี','เชียงใหม่','สุพรรณบุรี','อุดรธานี','บึงกาฬ','พิจิตร','ชลบุรี','ลำพูน','ขอนแก่น','นครราชสีมา','ฉะเชิงเทรา','ลพบุรี','สงขลา',
+'เลย','แพร่','อินโดนีเซีย','อุบลราชธานี','นครพนม'],['BKK','FRC','SKN','SPK','NPT','NBI','PTE','CMI','SPB','UDN','BKN','PCT','CBI','LPN','KKN','NMA','CCO','LRI','SKA','LEI','PRE','ID','UBN','NPM'])
+
+------------------------------------------------------------
+
+**ผลจากการ train ด้วย statmodels ด้วย x=data['average_price'], y=data['sold_out_amount']
+
+x=np.array(data['average_price']).reshape((-1,1))
+y=np.array(data['sold_out_amount'])
+
+OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.004
+Model:                            OLS   Adj. R-squared:                  0.003
+Method:                 Least Squares   F-statistic:                     3.287
+Date:                Tue, 19 Jul 2022   Prob (F-statistic):             0.0702
+Time:                        11:28:08   Log-Likelihood:                -8934.3
+No. Observations:                 854   AIC:                         1.787e+04
+Df Residuals:                     852   BIC:                         1.788e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const       3087.0865    379.192      8.141      0.000    2342.827    3831.346
+x1            -2.0159      1.112     -1.813      0.070      -4.198       0.167
+==============================================================================
+Omnibus:                      999.446   Durbin-Watson:                   1.629
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):            70806.375
+Skew:                           5.927   Prob(JB):                         0.00
+Kurtosis:                      46.004   Cond. No.                         446.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+---------------------------------------------------------------
+
+ค่อนข้างไม่สัมพันธ์กันระหว่างสองค่าตัวแปร 
+- classification 
+    > กลุ่มของราคา 
+        > 0-150 
+        > 151-300
+        > 301-350
+        > 350-500
+        > 501 up
+        visualization
+        
+    > จังหวัดที่มีการซื้อขายมากที่สุดภายใน dataset 
+        visualization ออกมา 
+    
+    > vectorized 
+    for loop to vertorized and return to dict to counting the each word
+        > word to using many time in describe product
+        > to help when we want to sell something in Shopee
+        
+    
+
